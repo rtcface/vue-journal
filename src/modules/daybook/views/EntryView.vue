@@ -23,7 +23,7 @@
     <textarea placeholder="¿Qué sucedio hoy?"></textarea>
   </div>
 
-  <daybook-fab/>
+  <daybook-fab icon="fa-save"/>
 
   <img 
     src="https://media.gq.com.mx/photos/60cf8f0a33c54bdef67610ee/16:9/w_2560%2Cc_limit/paisaje.jpg" 
