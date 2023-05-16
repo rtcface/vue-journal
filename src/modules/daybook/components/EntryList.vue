@@ -8,12 +8,10 @@
         v-model="term"
         >
     </div>
-    <div class="entry-scrollarea">
-        <h2>
+    <div class="entry-scrollarea">       
         <daybook-entry v-for="entry in entriesByTerm"
         :key="entry.id"
-        :entry="entry"/>
-        </h2>
+        :entry="entry"/>       
     </div>
     
  </div>
@@ -32,7 +30,7 @@ export default {
     ...mapGetters('journal',['getEntryByTerm']),
     entriesByTerm() {
         const result=this.getEntryByTerm( this.term )
-        console.log(result)
+        //console.log(result)
         return result
     }
  },
