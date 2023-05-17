@@ -4,7 +4,9 @@
         No hay nada seleccionado
     </h1>    
 </div>  
-<daybook-fab/>
+<daybook-fab
+    @on:click="createNewEntry"
+/>
 </template>
 
 <script>
@@ -14,6 +16,11 @@ export default {
     components:{
         DaybookFab: defineAsyncComponent( () => import('../components/DaybookFab.vue'))
         
+    },
+    methods:{
+        createNewEntry(){
+            this.$router.push({ name: 'entry', params: { id: 'new'} })
+        }
     }
 
 }

@@ -1,12 +1,16 @@
-// export const myAction = async (/* { commit } */) => {
-
 import journalApi from "@/api/journalApi"
-
+// export const myAction = async (/* { commit } */) => {
 // }
 
 export const loadEntries = async ({ commit }) => {
 
     const { data } = await journalApi.get('/entries.json')
+
+        if( !data ){
+            commit('setEntries',[])
+            return
+        }
+
      const entries = []
     for( let id of Object.keys( data ) ){
         entries.push(
@@ -18,12 +22,33 @@ export const loadEntries = async ({ commit }) => {
 
 }
 
-export const updateEntry = async ( /* { commit } */) =>  (entry)=> {
-    console.log("aca")
-    console.log(entry)
+export const updateEntry = async ( { commit }, entry)  =>  {
+    //console.log(entry)    
+    const {id, ...updateEntry } = entry
+
+    const { data } = await journalApi.put(`/entries/${id}.json`,updateEntry)
+    
+    const updatedEntry = {id,...data}
+    console.log(updatedEntry)
+    
+    commit('setEntry',updatedEntry)
+    return entry
 }
 
-export const createEntry = async ( /* {commit} */ ) =>{
-
+export const createEntry = async ( {commit},entry ) =>{
+    const { data } = await journalApi.post(`/entries.json`,entry)
+    const { name } = data
+    const saved = { id:name, ...entry }
+    console.log(saved)
+    commit('addEntry',saved)
+    return name
 }
+
+export const deleteEntry = async ({commit},id ) => {
+    await journalApi.delete(`/entries/${id}.json`)
+    commit('deleteEntry',id)
+    return
+}
+
+
 

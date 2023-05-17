@@ -7,7 +7,10 @@
       <span class="mx-2 fs-4 fw-light">{{yearDay}}</span>
     </div>
     <div>
-        <button class="btn btn-danger mx-2">
+        <button 
+        v-if="entry.id"
+        class="btn btn-danger mx-2"
+        @click="onDeleteEntry">
           Borrar
           <i class="fa fa-trash-alt"></i>
         </button>
@@ -43,6 +46,7 @@
 import { defineAsyncComponent } from 'vue'
 import { mapGetters, mapActions } from 'vuex'
 import getDateMonthYear from '../helpers/getDateMonthYear'
+import Swal from 'sweetalert2'
 
 export default {
   props: {
@@ -61,17 +65,63 @@ export default {
   },
   methods:{
      loadEntry() {
-      const entry =  this.getEntryById(this.id)
-      if( !entry ) return this.$router.push({ name: 'no-entry'})
+      let entry
+      if( this.id === 'new'){
+        entry = {
+          text: '',
+          date: new Date().getTime()
+        }
+      }else {
+        entry =  this.getEntryById(this.id)
+        if( !entry ) return this.$router.push({ name: 'no-entry'})
+      }
 
+
+      
       this.entry = entry
       //console.log(entry)
     },
-    ...mapActions('journal',['updateEntry']),
-    saveEntry(){
-      console.log("demo")
-       const data = this.updateEntry(this.entry)
-      console.log("demo2")
+    ...mapActions('journal',['updateEntry','createEntry','deleteEntry']),
+      async saveEntry(){
+          new Swal({
+            title: 'Espere por favor',
+            allowOutsideClick: false
+          })
+
+          Swal.showLoading()
+
+          if( this.entry.id  ) {
+            await this.updateEntry(this.entry)
+          } else{
+            const id = await this.createEntry(this.entry)
+            console.log(id)
+            this.$router.push({name:'entry',params:{id}})
+          }
+          Swal.fire('Guardado','Entrada registrada con exito', "success")
+    },
+    async onDeleteEntry(){
+      
+      const { isConfirmed } = await Swal.fire({
+        title: '¿Está seguro?',
+        text: 'Una vez borrado, no se puede recuperar',
+        showDenyButton:true,
+        confirmButtonText: 'Si estoy seguro'
+      })
+
+      if( isConfirmed ){
+
+        new Swal({title: 'Espere por favor',
+        allowOutsideClick: false
+        })
+        Swal.showLoading()
+        await this.deleteEntry(this.entry.id)
+        this.$router.push({name:'no-entry'})
+        Swal.fire('Eliminado','','success')
+      }
+
+
+
+
     }
   },
   created(){
