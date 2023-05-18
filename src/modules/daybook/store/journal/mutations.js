@@ -15,6 +15,7 @@ export const setEntry = ( state, entry ) => {
         if(id === x.id){
             x.text=entry.text
             x.date=entry.date
+            x.piture=entry.piture
         }
     },)
 
